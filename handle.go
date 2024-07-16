@@ -183,7 +183,7 @@ func (sf *Server) handleAssociate(ctx context.Context, writer io.Writer, request
 		return fmt.Errorf("listen udp failed, %v", err)
 	}
 
-	sf.logger.Errorf("client want to used addr %v, listen addr: %s", request.DestAddr, bindLn.LocalAddr())
+	sf.logger.Errorf("amir: client want to used addr %v, listen addr: %s", request.DestAddr, bindLn.LocalAddr())
 	// send BND.ADDR and BND.PORT, client used
 	if err = SendReply(writer, statute.RepSuccess, bindLn.LocalAddr()); err != nil {
 		return fmt.Errorf("failed to send reply, %v", err)
@@ -221,6 +221,7 @@ func (sf *Server) handleAssociate(ctx context.Context, writer io.Writer, request
 			// check src addr whether equal requst.DestAddr
 			srcEqual := ((request.DestAddr.IP.IsUnspecified()) || request.DestAddr.IP.Equal(srcAddr.IP)) && (request.DestAddr.Port == 0 || request.DestAddr.Port == srcAddr.Port) //nolint:lll
 			if !srcEqual {
+				sf.logger.Errorf("src addr %v not equal request.DestAddr %v", srcAddr, request.DestAddr)
 				continue
 			}
 
